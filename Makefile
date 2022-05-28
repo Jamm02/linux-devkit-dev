@@ -215,30 +215,31 @@ opensbi: $(opensbi_dir) $(buildroot_initramfs_tar)  $(buildroot_initramfs_sysroo
 
 .PHONY: image	
 image: $(vmlinux_stripped)
-	rm -rf output
-	mkdir output
+	@rm -rf output
+	@mkdir output
 	$(RISCV)/bin/riscv64-unknown-elf-objcopy -O binary work/linux/vmlinux output/vmlinux.bin
-	mkimage -A riscv -O linux -T kernel -C none -a 0x84000000 -e 0x84000000 -n Shakti-Vajra -d output/vmlinux.bin output/uImage
-	cp work/buildroot_initramfs/images/rootfs.tar output/rootfs.tar
-	dtc -I dts -O dtb -o output/shakti_100t.dtb $(confdir)/../dts/shakti_100t.dts
-	rm -rf output/vmlinux.bin
-	cp bsp/conf/shakti_uboot_defconfig bootloaders/uboot/configs/
+	@mkimage -A riscv -O linux -T kernel -C none -a 0x84000000 -e 0x84000000 -n Shakti-Vajra -d output/vmlinux.bin output/uImage
+	@cp work/buildroot_initramfs/images/rootfs.tar output/rootfs.tar
+	@dtc -I dts -O dtb -o output/shakti_100t.dtb $(confdir)/../dts/shakti_100t.dts
+	@rm -rf output/vmlinux.bin
+	@cp bsp/conf/shakti_uboot_defconfig bootloaders/uboot/configs/
 	$(MAKE) -C $(uboot_dir) $(uboot_config)
 	$(MAKE) -C $(uboot_dir) \
 		CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-linux-gnu- \
 		ARCH=riscv \
 		-j8
-	echo "U-Boot Compiled"
+	@echo "U-Boot Compiled"
 	$(MAKE) -C $(opensbi_dir) \
 		CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-linux-gnu- \
 		ARCH=riscv \
 		PLATFORM=generic \
 		FW_PAYLOAD_PATH=$(wrkdir)/../bootloaders/uboot/u-boot.bin \
 		FW_FDT_PATH=$(wrkdir)/../output/shakti_100t.dtb
-	cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.elf output/
-	cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.bin output/	
-	echo "OpenSBI Compilation Done"
-	echo "Images Generated and Present at Output Directory..."
+	@cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.elf output/
+	@cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.bin output/	
+	@echo "OpenSBI Compilation Done"
+	@echo "Images Generated and Present at Output Directory..."
+	@elf2hex 4 2097152 output/fw_payload.elf 2147483648 > output/code.mem
 
 
 .PHONY: buildroot_initramfs_sysroot vmlinux bbl 

@@ -105,7 +105,7 @@ After compilation a directory named 'Output' will be created in linux-devkit dir
 	fw_payload.elf - The U-Boot bootloaders ELF image (Can be started in GDB).
 	fw_payload.bin - The Binary image of U-Boot bootloader.
 	
-In the SD Card format it to ext4 filesystem and extract the rootfs.tar in the first partition of the disk. Create another directory called as "boot" in the first partiton of the disk and copy uImage and shakti_100t.dtb from the Output directory generated to the "boot" directory created.
+In the SD Card format it to ext4 filesystem and extract the rootfs.tar in the Second partition of the disk. Create another directory called as "boot" in the first partiton of the disk and copy uImage and shakti_100t.dtb from the Output directory generated to the "boot" directory created. And in the Third Partition, add the code.mem file, and start using Linux from SD-Boot.
 
 To start Linux from SD Card, Start the fw_payload.elf through GDB and enter "Boot" in the prompt.
 
@@ -128,12 +128,17 @@ Using SOC to Boot Linux
 -----
 Currently the linux kernel boots on ARTY A7 100t with C-Class.
 
-Assuming you have programmed the board and ready to deploy the bbl follow the below steps.
+Assuming you have programmed the board and ready to deploy the uImage follow the below steps.
 
 Open Three terminals,
 1. Miniterm	
 2. OpenOCD
 3. RISC-V GDB
+
+* Create three partitions. 
+   1. BOOT  - BOOT/boot/uImage and BOOT/boot/shakti_100t.dtb
+   2. IITM  - Extracted RFS.
+   3. BOOT1 - code.mem
 
 * Connect to the board using openocd with shakti-sdk
 
@@ -148,7 +153,7 @@ Open Three terminals,
 
      ​(gdb) set remotetimeout unlimited <br />
      (gdb) ​target remote localhost:3333 <br />
-     (gdb) file path/to/linux-devkit/bootloaders/riscv-pk/build/bbl <br />
+     (gdb) file path/to/linux-devkit/output/fw_payload.elf <br />
      (gdb) load	<br />
 
 
@@ -171,6 +176,10 @@ GDB after load,
       Password : shakti
     
 * One can use "adduser" to add new users .
+
+* Now, in OpenSBI, add bootargs, start from setenv,
+
+    Shakti-Uboot>> setenv bootargs 'root=/dev/mmcblk0p2 rootwait console=hvc0,19200n8 earlycon=sbi rw'
 
 Linux with minimal filesystem (miniterm)
 -----

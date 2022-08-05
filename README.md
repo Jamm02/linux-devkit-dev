@@ -77,7 +77,9 @@ Also once the above is done, please rebuild it.
 
 To enable SD Card support follow the below 2 steps :
 
-Checkout the uboot repo under bootloaders to sd-support-u-boot branch and shakti-opensbi directory to quikproto.
+Checkout the following: 
+    uboot directory to sd-support-u-boot branch
+    shakti-opensbi directory to d95835f002a900766312bd361989e3f3abf933d1
 
 Add the following line at the end in the fstab file present at buildroot/package/skeleton-init-sysv/skeleton/etc
 

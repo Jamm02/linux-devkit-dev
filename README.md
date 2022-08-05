@@ -78,11 +78,12 @@ Also once the above is done, please rebuild it.
 To enable SD Card support follow the below 2 steps :
 
 Do the following:
+```
     $ cd bootloaders/uboot/
     $ git checkout sd-support-u-boot
     $ cd ../shakti-opensbi/
     $ git checkout d95835f002a900766312bd361989e3f3abf933d1
-
+```
 Add the following line at the end in the fstab file present at buildroot/package/skeleton-init-sysv/skeleton/etc
 
 	devtmpfs	/dev		devtmpfs mode=1777,nouid	0	0

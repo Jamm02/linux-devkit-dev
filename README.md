@@ -4,7 +4,7 @@ The Development kit acts a "One Stop" means to build and deploy linux on a specf
 
 To Learn more  about the Shakti and its avaliable SOC , details can be found here at (http://shakti.org.in/)
 
-Salient Features
+Salient Features:
 ---
 1.  Boots Linux following Version 5.5(Stable)
 2.  Makes use of the following Supported Bootloaders such as
@@ -16,7 +16,7 @@ Salient Features
 Getting Started
 ---
 
-Setting up the Build Enviroment
+Setting up the Build Enviroment:
 ----
 
 

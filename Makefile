@@ -138,9 +138,6 @@ endif
 $(vmlinux): $(linux_srcdir) $(linux_wrkdir)/.config $(buildroot_initramfs_sysroot_stamp)
 	$(MAKE) -C $< O=$(linux_wrkdir) \
 		CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-linux-gnu- \
-		CONFIG_INITRAMFS_SOURCE="$(confdir)/initramfs.txt $(buildroot_initramfs_sysroot)" \
-		CONFIG_INITRAMFS_ROOT_UID=$(shell id -u) \
-		CONFIG_INITRAMFS_ROOT_GID=$(shell id -g) \
 		ARCH=riscv \
 		vmlinux
 
@@ -236,8 +233,10 @@ image: $(vmlinux_stripped)
 		FW_PAYLOAD_PATH=$(wrkdir)/../bootloaders/uboot/u-boot.bin \
 		FW_FDT_PATH=$(wrkdir)/../output/shakti_100t.dtb
 	cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.elf output/
-	cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.bin output/	
+	cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.bin output/
 	echo "OpenSBI Compilation Done"
+	elf2hex --bit-width 32 --input output/fw_payload.elf > output/code.mem
+	echo "Code.mem Generated!!"
 	echo "Images Generated and Present at Output Directory..."
 
 

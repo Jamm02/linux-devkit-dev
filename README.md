@@ -55,7 +55,7 @@ Getting started on linux Devlopment
 --
 The linux development repository uses submodules. You need the --recursive option to fetch the submodules automatically
             
-     $ git clone --recursive https://gitlab.com/shaktiproject/software/linux-devkit.git
+     $ git clone --recursive https://gitlab.com/mindgrove1/software/linux-devkit-fork.git
             
 The development package Supports C-Class 64bit Core,which boots linux on top of Proxy Kernel.
 
@@ -68,8 +68,8 @@ For instance Shakti C-Class is based on RV64IMAC. So alter the config file.
 
     Location : <Your linux-devkit dir>/buildroot/package/busybox/busybox.config
 
-    CONFIG_EXTRA_CFLAGS="-g -march=rv64imac -mabi=lp64"
-    CONFIG_EXTRA_LDFLAGS="-g -march=rv64imac -mabi=lp64"
+    CONFIG_EXTRA_CFLAGS="-g -march=rv64imafdc -mabi=lp64d"
+    CONFIG_EXTRA_LDFLAGS="-g -march=rv64imafdc -mabi=lp64d"
 
 Also once the above is done, please rebuild it.
 
@@ -77,8 +77,23 @@ Also once the above is done, please rebuild it.
 
 To enable SD Card support follow the below 2 steps :
 
-Checkout the uboot repo under bootloaders to sd-support-u-boot branch and shakti-opensbi directory to quikproto.
-
+Do the following:
+```
+    $ cd bootloaders/uboot/
+    $ git checkout sd-support-u-boot
+    $ cd ../shakti-opensbi/
+    $ git checkout d95835f002a900766312bd361989e3f3abf933d1
+    $ cd ..
+    $ git clone git://github.com/sifive/elf2hex.git
+    $ cd elf2hex
+    $ autoreconf -i
+    $ ./configure --target=riscv64-unknown-elf
+    $ make
+    $ make install
+    $ sudo cp elf2hex /bin/
+    $ sudo cp elf2bin /bin/
+    $ cd ..
+```
 Add the following line at the end in the fstab file present at buildroot/package/skeleton-init-sysv/skeleton/etc
 
 	devtmpfs	/dev		devtmpfs mode=1777,nouid	0	0
@@ -96,6 +111,8 @@ To start the compilation of the BBL use the following command
 To start the compilation for SD Card Images use the following command
 
 	make image
+        elf2hex --bit-width 32 --input output/fw_payload.elf > output/code.mem
+
 	
 After compilation a directory named 'Output' will be created in linux-devkit directory. The Output directory will contain the images of :
 
@@ -105,7 +122,7 @@ After compilation a directory named 'Output' will be created in linux-devkit dir
 	fw_payload.elf - The U-Boot bootloaders ELF image (Can be started in GDB).
 	fw_payload.bin - The Binary image of U-Boot bootloader.
 	
-In the SD Card format it to ext4 filesystem and extract the rootfs.tar in the first partition of the disk. Create another directory called as "boot" in the first partiton of the disk and copy uImage and shakti_100t.dtb from the Output directory generated to the "boot" directory created.
+In the SD Card format it to ext4 filesystem and extract the rootfs.tar in the Second partition of the disk. Create another directory called as "boot" in the first partiton of the disk and copy uImage and shakti_100t.dtb from the Output directory generated to the "boot" directory created. And in the Third Partition, add the code.mem file, and start using Linux from SD-Boot.
 
 To start Linux from SD Card, Start the fw_payload.elf through GDB and enter "Boot" in the prompt.
 
@@ -128,33 +145,45 @@ Using SOC to Boot Linux
 -----
 Currently the linux kernel boots on ARTY A7 100t with C-Class.
 
-Assuming you have programmed the board and ready to deploy the bbl follow the below steps.
+Assuming you have programmed the board and ready to deploy the uImage follow the below steps.
 
 Open Three terminals,
 1. Miniterm	
 2. OpenOCD
 3. RISC-V GDB
 
+* Create three partitions. 
+   1. BOOT  - BOOT/boot/uImage and BOOT/boot/shakti_100t.dtb
+   2. IITM  - Extracted RFS.
+   3. BOOT1 - code.mem
+
 * Connect to the board using openocd with shakti-sdk
 
+```
      $ cd ~/shakti-sdk/bsp/third_party/vajra <br />
      $ sudo $(which openocd) -f ftdi.cfg <br />
-     
+```
+
 * Connect to gtkterm or minicom or miniterm with a baudrate of 19200 and port as /dev/ttyUSB
 
+```
      $ sudo miniterm.py /dev/ttyUSB1 19200 <br />
-    
+```
+
 * Using gdb(riscv64-unknown-elf-gdb) load the bbl , steps are given below.
 
+```
      ​(gdb) set remotetimeout unlimited <br />
      (gdb) ​target remote localhost:3333 <br />
-     (gdb) file path/to/linux-devkit/bootloaders/riscv-pk/build/bbl <br />
+     (gdb) file path/to/linux-devkit/output/fw_payload.elf <br />
      (gdb) load	<br />
-
+```
 
 * Once done inspect the memory at 0x80000000 to check if the image is loaded properly. 
 
+```
      (gdb) x/10x 0x80000000
+```
 
 GDB after load,
 
@@ -163,14 +192,25 @@ GDB after load,
 
 * Hit Continue to get the output. Output is displayed in Serial Monitor (Miniterm).
 
+```
       (gdb) c  
+```
 
 * Login details are 
 
+```
       Login ID : root
       Password : shakti
-    
+```
+
 * One can use "adduser" to add new users .
+
+* Now, in OpenSBI, add bootargs, start from setenv,
+
+```
+    Shakti U-boot> setenv bootargs 'root=/dev/mmcblk0p2 rootwait console=hvc0,19200n8 earlycon=sbi rw'
+    Shakti U-boot> boot
+```
 
 Linux with minimal filesystem (miniterm)
 -----
@@ -213,3 +253,4 @@ Sample Debug Log
 
 
 note: If you have already installed toolchain, please use it appropriately.
+

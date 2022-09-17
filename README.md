@@ -80,7 +80,7 @@ To enable SD Card support follow the below 2 steps :
 Do the following:
 ```
     $ cd bootloaders/uboot/
-    $ git checkout sd-support-u-boot
+    $ git checkout fpu-sd-support-uboot
     $ cd ../shakti-opensbi/
     $ git checkout d95835f002a900766312bd361989e3f3abf933d1
     $ cd ..
@@ -111,7 +111,7 @@ To start the compilation of the BBL use the following command
 To start the compilation for SD Card Images use the following command
 
 	make image
-        elf2hex --bit-width 32 --input output/fw_payload.elf > output/code.mem
+    elf2hex --bit-width 32 --input output/fw_payload.elf > output/code.mem
 
 	
 After compilation a directory named 'Output' will be created in linux-devkit directory. The Output directory will contain the images of :

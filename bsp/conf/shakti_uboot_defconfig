@@ -31,5 +31,5 @@ CONFIG_DEBUG_UART_SHAKTI=y
 CONFIG_SYS_PROMPT="Shakti U-Boot> "
 CONFIG_BOOTDELAY=5
 CONFIG_USE_BOOTARGS=y
-CONFIG_BOOTARGS="console=hvc0,19200n8 root=/dev/mmcblk0p1 rw rootfs=ext4 noinitrd selinux=0"
+CONFIG_BOOTARGS="earlyprintk console=hvc0,19200n8 root=/dev/mmcblk0p1 rw rootfs=ext4 noinitrd selinux=0"
 CONFIG_BOOTCOMMAND="load mmc 0:1 ${fdt_addr_r} /boot/shakti_100t.dtb; fdt addr ${fdt_addr_r}; fdt print; load mmc 0:1 ${kernel_addr_r} /boot/uImage; bootm ${kernel_addr_r} - ${fdt_addr_r}"

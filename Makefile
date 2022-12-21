@@ -155,7 +155,7 @@ vmlinux_sd: $(linux_srcdir) $(linux_wrkdir)/.config $(buildroot_initramfs_sysroo
 		vmlinux
 
 .PHONY : vmlinux_stripped_sd
-vmlinux_stripped_sd: $(vmlinux_sd)
+vmlinux_stripped_sd: vmlinux_sd
 	$(target)-strip -o $@ $(vmlinux)
 
 .PHONY : uboot_cclass
@@ -225,7 +225,7 @@ opensbi: $(opensbi_dir) $(buildroot_initramfs_tar)  $(buildroot_initramfs_sysroo
 		  FW_FDT_PATH=$(confdir)/../dts/shakti_100t.dtb
 
 .PHONY: image	
-image: $(vmlinux_stripped_sd)
+image: vmlinux_stripped_sd
 	@rm -rf output
 	@mkdir output
 	$(RISCV)/bin/riscv64-unknown-elf-objcopy -O binary work/linux/vmlinux output/vmlinux.bin

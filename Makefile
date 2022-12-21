@@ -225,7 +225,7 @@ opensbi: $(opensbi_dir) $(buildroot_initramfs_tar)  $(buildroot_initramfs_sysroo
 		  FW_FDT_PATH=$(confdir)/../dts/shakti_100t.dtb
 
 .PHONY: image	
-image: vmlinux_stripped_sd
+image: $(vmlinux_stripped_sd)
 	@rm -rf output
 	@mkdir output
 	$(RISCV)/bin/riscv64-unknown-elf-objcopy -O binary work/linux/vmlinux output/vmlinux.bin
@@ -247,7 +247,8 @@ image: vmlinux_stripped_sd
 		FW_PAYLOAD_PATH=$(wrkdir)/../bootloaders/uboot/u-boot.bin \
 		FW_FDT_PATH=$(wrkdir)/../output/shakti_100t.dtb
 	@cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.elf output/
-	@cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.bin output/	
+	@cp $(wrkdir)/../bootloaders/shakti-opensbi/build/platform/generic/firmware/fw_payload.bin output/
+	@rm -rf bootloaders/uboot/configs/shakti_uboot_defconfig
 	@echo "OpenSBI Compilation Done"
 	@echo "Images Generated and Present at Output Directory..."
 	@elf2hex 4 2097152 output/fw_payload.elf 2147483648 > output/code.mem

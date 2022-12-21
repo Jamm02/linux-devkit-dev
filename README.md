@@ -82,7 +82,7 @@ Do the following:
     $ cd bootloaders/uboot/
     $ git checkout sd-support-u-boot
     $ cd ../shakti-opensbi/
-    $ git checkout d95835f002a900766312bd361989e3f3abf933d1
+    $ git checkout shakti-linux
 ```
 Add the following line at the end in the fstab file present at buildroot/package/skeleton-init-sysv/skeleton/etc
 
@@ -110,7 +110,11 @@ After compilation a directory named 'Output' will be created in linux-devkit dir
 	fw_payload.elf - The U-Boot bootloaders ELF image (Can be started in GDB).
 	fw_payload.bin - The Binary image of U-Boot bootloader.
 	
-In the SD Card format it to ext4 filesystem and extract the rootfs.tar in the Second partition of the disk. Create another directory called as "boot" in the first partiton of the disk and copy uImage and shakti_100t.dtb from the Output directory generated to the "boot" directory created. And in the Third Partition, add the code.mem file, and start using Linux from SD-Boot.
+n the SD Card create the following partitions: 
+	
+	p1 - ext4 filesystem  - Label: RFS   - extract the rootfs.tar in output directory (command to extract: tar -xvf rootfs.tar -C /mnt/card)
+	p2 - ext4 filesystem  - Label: BOOT1 - create a directory called \"boot\" and copy the shakti_100t.dtb and uImage to it.
+	p3 - fat32 filesystem - Label: BOOT  - copy the code.mem into the fat32 partition(p3) of the SD Card.
 
 To start Linux from SD Card, Start the fw_payload.elf through GDB and enter "Boot" in the prompt.
 

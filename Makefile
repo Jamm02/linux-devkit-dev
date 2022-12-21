@@ -147,6 +147,15 @@ $(vmlinux): $(linux_srcdir) $(linux_wrkdir)/.config $(buildroot_initramfs_sysroo
 $(vmlinux_stripped): $(vmlinux)
 	$(target)-strip -o $@ $<
 
+$(vmlinux_sd): $(linux_srcdir) $(linux_wrkdir)/.config
+	$(MAKE) -C $< O=$(linux_wrkdir) \
+		CROSS_COMPILE=$(RISCV)/bin/riscv64-unknown-linux-gnu- \
+		ARCH=riscv \
+		vmlinux
+
+$(vmlinux_stripped_sd): $(vmlinux_sd)
+	$(target)-strip -o $@ $<
+
 .PHONY : uboot_cclass
 uboot_cclass:$(uboot_dir) 
 		$(MAKE) -C $< O=$(uboot_wrkdir) \
@@ -214,7 +223,7 @@ opensbi: $(opensbi_dir) $(buildroot_initramfs_tar)  $(buildroot_initramfs_sysroo
 		  FW_FDT_PATH=$(confdir)/../dts/shakti_100t.dtb
 
 .PHONY: image	
-image: $(vmlinux_stripped)
+image: $(vmlinux_stripped_sd)
 	@rm -rf output
 	@mkdir output
 	$(RISCV)/bin/riscv64-unknown-elf-objcopy -O binary work/linux/vmlinux output/vmlinux.bin

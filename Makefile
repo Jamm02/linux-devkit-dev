@@ -156,7 +156,7 @@ vmlinux_sd: $(linux_srcdir) $(linux_wrkdir)/.config $(buildroot_initramfs_sysroo
 
 .PHONY : vmlinux_stripped_sd
 vmlinux_stripped_sd: vmlinux_sd
-	$(target)-strip -o $@ $(vmlinux)
+	$(target)-strip $(vmlinux)
 
 .PHONY : uboot_cclass
 uboot_cclass:$(uboot_dir) 

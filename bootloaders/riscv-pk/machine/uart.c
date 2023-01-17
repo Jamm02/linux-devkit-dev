@@ -69,7 +69,7 @@ static void uart_done(const struct fdt_scan_node *node, void *extra)
  // uart[UART_REG_RXCTRL] = UART_RXEN;
    asm volatile (
         "uart_end: li t1, 0x11300" "\n\t"	//The base address of UART config registers
-        "lb a0, 12(t1)" "\n\t"
+        "lh a0, 12(t1)" "\n\t"
         "andi a0, a0, 0x1" "\n\t"
         "beqz a0, uart_end" "\n\t"
 				:

@@ -14,7 +14,7 @@
       reg = <0>;
       status = "okay";
       compatible = "riscv";
-      riscv,isa = "rv64imac";
+      riscv,isa = "rv64imafdc";
       mmu-type = "riscv,sv39";
       clock-frequency = <50000000>;
       CPU0_intc: interrupt-controller {
@@ -26,7 +26,7 @@
   };
   memory@80000000 {
     device_type = "memory";
-    reg = <0x0 0x80000000 0x0  0x10000000>;
+    reg = <0x0 0x80000000 0x0  0x80000000>;
   };
   
   soc {
@@ -49,40 +49,6 @@
       riscv,max-priority = <7>;
       riscv,ndev = <29>;
     };
-    ethernet: ethernet@44000{
-      #address-cells = <2>;
-      #size-cells = <2>;
-      device_type = "network";
-      compatible = "xlnx,xps-ethernetlite-3.00.a", "xlnx,xps-ethernetlite-1.00.a";
-      interrupt-parent = <&plic>;
-      interrupts = <29 0x1>;
-      local-mac-address = [00 0a 35 00 00 00];
-      phy-handle = <&phy1>;
-      reg = <0x0 0x44000 0x0 0x4000>;
-      xlnx,duplex = <0x1>;
-      xlnx,include-global-buffers = <0x1>;
-      xlnx,include-internal-loopback = <0x1>;
-      xlnx,include-mdio = <0x1>;
-      xlnx,instance = "axi_ethernetlite_inst";
-      xlnx,rx-ping-pong = <0x1>;
-      xlnx,s-axi-id-width = <0x1>;
-      xlnx,tx-ping-pong = <0x1>;
-      threshold = <0x40>;
-      sensitivity = <6>;
-      axi_ethernetlite_0_mdio: mdio {
-        #address-cells = <0x1>;
-        #size-cells = <0x0>;
-        phy1: phy@1{
-          device_type = "ethernet-phy";
-          compatible = "ethernet-phy-ieee802.3-c22";
-          ti,rx-internal-delay = <1000000000>;
-          ti,tx-internal-delay = <1000000000>;
-          ti,fifo-depth = <0x1000>;
-          reg = <1>;
-          status = "okay";
-        };
-     };
-   };
    clock: oscillator {
      #clock-cells = <0>;
      compatible = "fixed-clock";
@@ -111,9 +77,5 @@
     compatible = "shakti,uart0";
     reg= <0x0 0x11300 0x0 0x100>;
   };
-  uart1:uart@11400{                            // Disable this in Menuconfig when not using it.
-    compatible = "shakti,uart1";
-    reg= <0x0 0x11400 0x0 0x100>;
-  };  
  };
 };
